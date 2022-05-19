@@ -1,0 +1,714 @@
+---
+title: "Capstone Project"
+format: html
+editor: visual
+---
+
+## Google Data Analytics Capstone Project
+
+![](https://miro.medium.com/max/586/1*ddC1KfTAHBXjmGseS2drRw.png){style="float:right;" fig-alt="Cyclistic Logo" width="401"}
+
+***Scenario***: You are a junior data analyst working in the marketing analyst team at Cyclistic, a bike-share company in Chicago. The director of marketing believes the company's future success depends on maximizing the number of annual memberships. Therefore, your team wants to understand how casual riders and annual members use Cyclistic bikes differently. From these insights, your team will design a new marketing strategy to convert casual riders into annual members. But first, Cyclistic executives must approve your recommendations, so they must be backed up with compelling data insights and professional data visualizations.
+
+# ***---- ASK ----*** :
+
+What is the problem you are trying to solve?{style="color:red"}.
+
+-   The Cyclistic team wants to convert casual riders into annual pass members. In order to do that we must first find out what makes the casual riders different from the annual riders and what the casual riders need in order to convert into annual members.
+
+How can your insights drive business decisions?{style="color:red"}.
+
+-   The insights we find can be used by the marketing team to create a campaign that can hopefully covert the casual members into annual members
+
+# ***---- PREPARE ----***:
+
+[Where is your data located?]{style="color:red"}.
+
+-   The data is located in Kaggle and [in this online link provided by Google](https://divvy-tripdata.s3.amazonaws.com/index.html)
+
+[How is the data organized?]{style="color:red"}.
+
+-   The dataset is comprised of many CSV files each one pertaining to a specific month from 2020/04 to 2022/04
+
+[Are there issues with bias or credibility in this data? Does your data ROCCC?]{style="color:red"}.
+
+-   This data appears bias free and follows the ROCCC rules.
+
+[How are you addressing licensing, privacy, security, and accessibility?]{style="color:red"}.
+
+-   This data is collected by the own company and does not contain any personal information about the customers.
+
+[How did you verify the data's integrity?]{style="color:red"}.
+
+-   Looking at the data through Excel, it does look like all of the spreadsheets contain the same variables and is accurate, complete and consistent
+
+[How does it help you answer your question?]{style="color:red"}.
+
+-   The data contained within can help us find some differences between the Casual and Annual Pass riders
+
+[Are there any problems with the data?]{style="color:red"}.
+
+-   It would help if we had a bit more information about the customers such as Gender and Occupation
+
+# ***---- PROCESS ----***:
+
+[What tools are you choosing and why?]{style="color:red"}.
+
+-   I'm using R as the for the flexibility of both being able to clean the data and also analyze it at the same time.
+
+[Have you ensured your data's integrity?]{style="color:red"}.
+
+-   Yes, I have ensured the data's integrity
+
+Let's start by importing the libraries we will be using:
+
+```{r}
+#| label: load-packages
+#| include: true
+
+library(tidyverse)
+library(janitor)
+library(lubridate)
+library(skimr)
+library(data.table)
+library(ggplot2)
+
+```
+
+Now let's import our CSVs. We will be using the fread() function from the data.table package as the data is quite large and fread() is much faster than the normal read_csv().
+
+```{r}
+#| label: load-csv
+#| include: true
+csv_202004 <- fread("202004-divvy-tripdata.csv")
+csv_202005 <- fread("202005-divvy-tripdata.csv")
+csv_202006 <- fread("202006-divvy-tripdata.csv")
+csv_202007 <- fread("202007-divvy-tripdata.csv")
+csv_202008 <- fread("202008-divvy-tripdata.csv")
+csv_202009 <- fread("202009-divvy-tripdata.csv")
+csv_202010 <- fread("202010-divvy-tripdata.csv")
+csv_202011 <- fread("202011-divvy-tripdata.csv")
+csv_202012 <- fread("202012-divvy-tripdata.csv")
+csv_202101 <- fread("202101-divvy-tripdata.csv")
+csv_202102 <- fread("202102-divvy-tripdata.csv")
+csv_202103 <- fread("202103-divvy-tripdata.csv")
+csv_202104 <- fread("202104-divvy-tripdata.csv")
+csv_202105 <- fread("202105-divvy-tripdata.csv")
+csv_202106 <- fread("202106-divvy-tripdata.csv")
+csv_202107 <- fread("202107-divvy-tripdata.csv")
+csv_202108 <- fread("202108-divvy-tripdata.csv")
+csv_202109 <- fread("202109-divvy-tripdata.csv")
+csv_202110 <- fread("202110-divvy-tripdata.csv")
+csv_202111 <- fread("202111-divvy-tripdata.csv")
+csv_202112 <- fread("202112-divvy-tripdata.csv")
+csv_202201 <- fread("202201-divvy-tripdata.csv")
+csv_202202 <- fread("202202-divvy-tripdata.csv")
+csv_202203 <- fread("202203-divvy-tripdata.csv")
+csv_202204 <- fread("202204-divvy-tripdata.csv")
+```
+
+Now let's check to see if the columns are the same type so we can join them all into one big dataset
+
+```{r}
+
+#| label: compare-columns
+#| include: true
+
+compare_df_cols_same(
+  csv_202004,csv_202005,csv_202006,csv_202007,csv_202008,csv_202009,csv_202010,csv_202011,csv_202012,csv_202101,csv_202102,csv_202103,csv_202104,csv_202105,csv_202106,csv_202107,csv_202108,csv_202109,csv_202110,csv_202111,csv_202112,csv_202201,csv_202202,csv_202203,csv_202204,
+  bind_method = c("bind_rows", "rbind"),
+  verbose = TRUE
+)
+```
+
+The columns "end_station_id" and "start_station_id" from 2020/04 until 2020/12 are of a different type (Integer) than the rest of the CSVs(Character).
+
+So let's turn all the Integer type columns into Character type
+
+```{r}
+csv_202004_2 <- mutate(csv_202004,start_station_id = as.character(start_station_id), 
+                     end_station_id = as.character   (end_station_id))
+csv_202005_2 <- mutate(csv_202005,start_station_id = as.character(start_station_id), 
+                     end_station_id = as.character(end_station_id))
+csv_202006_2 <- mutate(csv_202006,start_station_id = as.character(start_station_id), 
+                     end_station_id = as.character(end_station_id))
+csv_202007_2 <- mutate(csv_202007,start_station_id = as.character(start_station_id), 
+                     end_station_id = as.character(end_station_id))
+csv_202008_2 <- mutate(csv_202008,start_station_id = as.character(start_station_id), 
+                     end_station_id = as.character(end_station_id))
+csv_202009_2 <- mutate(csv_202009,start_station_id = as.character(start_station_id), 
+                     end_station_id = as.character(end_station_id))
+csv_202010_2 <- mutate(csv_202010,start_station_id = as.character(start_station_id), 
+                     end_station_id = as.character(end_station_id))
+csv_202011_2 <- mutate(csv_202011,start_station_id = as.character(start_station_id), 
+                     end_station_id = as.character(end_station_id))
+
+```
+
+Now let's create merge all these dataframes into a single one:
+
+```{r}
+
+merged_df <- bind_rows(csv_202004_2,csv_202005_2,csv_202006_2,csv_202007_2,csv_202008_2,csv_202009_2,csv_202010_2,csv_202011_2,csv_202012,csv_202101,csv_202102,csv_202103,csv_202104,csv_202105,csv_202106,csv_202107,csv_202108,csv_202109,csv_202110,csv_202111,csv_202112,csv_202201,csv_202202,csv_202203,csv_202204)
+```
+
+```{r}
+
+skim_without_charts(merged_df)
+```
+
+We can see that the columns "start_station_id", "end_station_id", "end_lat" and "end_lng" have some missing values. In total we have 181687 missing values which may seem like a lot but since our dataset is composed of a total of 9584529 rows it is actually just a very small % so we can safely drop these columns.
+
+However, before we do that, we notice that some of the columns that might appear not so useful such as latitude and longitude columns, but we also want to make a dashboard later using Tableau so these coordinates might come in useful when displaying maps so we chose to keep it. If we were not planning on using another data viz software later we could drop it by using the following code:
+
+```{r}
+#merged_df_2 <- merged_df %>%
+#  select(-c(start_lat,start_lng,end_lat, end_lng))
+#glimpse(merged_df_2)
+```
+
+Now let's check for duplicate rows
+
+```{r}
+summary(merged_df)
+summary(distinct(merged_df))
+
+```
+
+We can see that both the length for the normal and distinct values of the dataframe are the same so that means that there are no duplicated rows
+
+```{r}
+
+# Now let's drop the NAs
+
+merged_df_clean <- drop_na(merged_df)
+skim_without_charts(merged_df_clean)
+```
+
+We dropped the NAs but there there are still some rows in the "start_station_name "and "end_station_name" columns that are blank. There are quite a lot of them so ideally we would ask the Cyclist team about it however we cannot do that here. So instead I will leave these columns as is since the data about members/casuals and ride times will still be useful for us. When we analyze the station data more carefully we will deal with them.
+
+Now let's create some other columns that could be useful for our analysis
+
+```{r}
+
+# First we convert the dates from the started_at and ended_at columns into POSIXct datetime values
+
+merged_df_clean$started_at <- as.POSIXct(merged_df_clean$started_at, "%Y-%m-%d %H:%M:%S")
+merged_df_clean$ended_at <- as.POSIXct(merged_df_clean$ended_at, "%Y-%m-%d %H:%M:%S")
+
+
+#Then we separate the dates into month, day, year and weekday and add the starting hour of the ride
+
+merged_df_clean$date <- as.Date(merged_df_clean$started_at) 
+merged_df_clean$month <- format(as.Date(merged_df_clean$started_at),"%B")
+merged_df_clean$day <- format(as.Date(merged_df_clean$date), "%d")
+merged_df_clean$year <- format(as.Date(merged_df_clean$date), "%Y")
+merged_df_clean$day_of_week <- format(as.Date(merged_df_clean$date), "%A")
+merged_df_clean$start_hour <- as.numeric(format(merged_df_clean$started_at, '%H'))
+
+# Change the month column to show the month names instead of numbers and order them for future graphs
+# Order the day of the week columns for future graphs
+merged_df_clean$month <- ordered(merged_df_clean$month, levels=c("January", "February", "March", "April", "May", "June", "July", "August", "September","October", "November", "December"))
+
+merged_df_clean$day_of_week <- ordered(merged_df_clean$day_of_week, levels=c("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"))
+
+
+
+head(merged_df_clean)
+```
+
+Now let's create another new column showing the total ride duration in minutes as well as joining the "start station" with the "end station" variables into a new "route" column
+
+```{r}
+
+merged_df_clean_v2 <- merged_df_clean %>%  mutate(merged_df_clean, ride_duration = round(difftime(ended_at, started_at, units = "mins"), 0),
+                      route = str_c(start_station_name, end_station_name, sep=" -- "))
+
+head(merged_df_clean_v2)
+
+```
+
+```{r}
+
+
+#Let's check our newly created column and see if everything is alright and we don't have any negative values
+
+duration_check <- merged_df_clean_v2[with(merged_df_clean, order(ride_duration)) , ]
+
+head(duration_check)
+
+# Let's also check our station names to see in there's anything wrong
+
+unique(merged_df_clean_v2$start_station_name)
+
+```
+
+We can see that there are numbers with negative ride durations as well as some testing stations that should be removed
+
+```{r}
+
+# Remove the testing stations as well as remove rides with negative or 0 min ride time
+
+merged_df_clean_v2 <- merged_df_clean_v2[!(merged_df_clean_v2$start_station_name %ilike% "TEST" | merged_df_clean_v2$ride_duration<=0),]
+
+```
+
+```{r}
+
+#Let's see if it worked
+
+nrow(subset(merged_df_clean_v2,ride_duration <= 0))
+
+nrow(subset(merged_df_clean_v2, start_station_name %ilike% "TEST"))
+
+```
+
+```{r}
+
+# Let's also rename the member_casual column into member_type for easier understanding
+
+colnames(merged_df_clean_v2)[colnames(merged_df_clean_v2) == "member_casual"] <- "member_type"
+colnames(merged_df_clean_v2)
+
+```
+
+```{r}
+
+summary(merged_df_clean_v2)
+
+```
+
+Now let's save this cleaned database in a CSV file. Again the data.table package comes in handy as fwrite() is much faster than the usual write.csv()
+
+```{r}
+
+#fwrite(merged_df_clean_v2, "capstone_merged_data.csv")
+
+```
+
+The data looks clean and ready for analyzing. Let's go to the next stage
+
+[What steps have you taken to ensure that your data is clean?]{style="color:red"}.
+
+-   I have analyzed it thoroughly and used R to clean and organize the data
+
+[Have you documented your cleaning process so you can review and share those results?]{style="color:red"}.
+
+-   Yes, the process is thoroughly documented above
+
+# ***---- ANALYZE ----***
+
+Let's start the analysis phase
+
+```{r}
+
+merged_df_clean_v2 <- fread("capstone_merged_data.csv")
+
+# Change the month columns to show the month names instead of numbers
+merged_df_clean_v2$month <- ordered(merged_df_clean_v2$month, levels=c("January", "February", "March", "April", "May", "June", "July", "August", "September","October", "November", "December"))
+
+merged_df_clean_v2$day_of_week <- ordered(merged_df_clean_v2$day_of_week, levels=c("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"))
+
+head(merged_df_clean_v2)
+
+```
+
+Let's start off by taking a look at the distribution of casual and annual members in this dataset
+
+```{r}
+
+# First let's make a plot calculating how many casuals and annual members total and then taking the percentage
+
+member_plot <- merged_df_clean_v2 %>% 
+  group_by(member_type) %>% 
+  tally %>% 
+  mutate(percentage = round(n/sum(n)*100))
+
+
+```
+
+```{r}
+
+# Now we plot
+
+ggplot(member_plot, aes(x = 1, y = percentage, fill = member_type)) +
+  geom_bar(stat = "identity", width =1) +
+  geom_text(aes(label = paste(member_type, paste(percentage, "%"), sep = "\n")), 
+            position = position_stack(vjust = 0.5), color = "white") + 
+  labs(title = " Members vs Casual Distribution") + 
+  coord_polar(theta = "y") +
+  theme_void()
+
+
+```
+
+We can see that there are more members than casuals represented in this dataset
+
+Now let's look at the monthly distribution of rides
+
+```{r}
+
+# First let's create a dataframe calculating the number of rides, average duration, and total duration per month to aid our visualizations
+
+months_plot <- merged_df_clean_v2 %>%
+  group_by(member_type, month) %>%
+  summarize(
+    number_of_rides = n(),
+    average_duration = mean(ride_duration),
+    total_duration = sum(ride_duration))
+
+```
+
+```{r}
+
+# Now let's plot
+
+ggplot(months_plot, aes(x = month, y = number_of_rides, fill = member_type)) + 
+  geom_col(position = "dodge") +
+  theme(panel.border = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "black")
+  ) +
+  scale_y_continuous(labels = scales::comma) +
+   theme(axis.text.x = element_text(angle = 60,hjust = 1)) +
+  labs(
+    title="Rides per month", 
+    x = "Month", 
+    y = "Number of rides",
+    fill='Member Types'
+    )
+```
+
+We can clearly see that the months where the most rides occur are the summer months of June, July and August with the winter months of December, January and February as the ones with the least amount. We can also see an interesting trend regarding the membership type in that the casual members drop significantly in those winter months and slowly pick up pace until surpassing the annual members in July which is the only month it does so.
+
+We can look online to see more clearly what the weather in Chicago is like
+
+![](images/chicago%20weather.png)
+
+Looking at this chart we can see that indeed in the winter months the weather dips below 0º so it is no wonder the usage rate for the bikes dip as well.
+
+Now let's go a little deeper and look at the relationships betweek riders and days of the week
+
+```{r}
+
+# Once again create a database to help us visualize better our data
+
+weekdays_plot <- merged_df_clean_v2 %>%
+  group_by(member_type, day_of_week) %>%
+  summarize(
+    number_of_rides = n(),
+    average_duration = mean(ride_duration),
+    total_duration = sum(ride_duration))
+
+```
+
+```{r}
+
+# Now we plot
+
+ggplot(weekdays_plot, aes(x = day_of_week, y = number_of_rides, fill = member_type)) + 
+  geom_col(position = "dodge", color="black") +
+  theme(panel.border = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "black")
+  ) +
+    theme_classic() +
+  scale_y_continuous(labels = scales::comma) +
+   theme(axis.text.x = element_text(angle = 60,hjust = 1)) +
+  labs(
+    title="Rides per weekday", 
+    x = "Day of the week", 
+    y = "Number of rides",
+    fill='Member Types'
+    )
+
+```
+
+Now this is interesting! We can clearly see the spikes in the weekends for the casual members where they even surpass the annual pass members. This is probably because annual pass members use the bikes for getting to and from work everyday whilst the casual members use it more for fun or for a short trip to a store which means they use it more during the weekends when they have time.
+
+Now let's go even deeper and let's look at the hourly distribution of the rides.
+
+```{r}
+
+# Create database
+
+hourly_plot <- merged_df_clean_v2 %>%
+  group_by(member_type, start_hour) %>%
+  summarize(
+    number_of_rides = n(),
+    average_duration = mean(ride_duration),
+    total_duration = sum(ride_duration))
+
+
+```
+
+```{r}
+
+# Plot it
+
+ggplot(hourly_plot, aes(x = start_hour, y = number_of_rides, fill = member_type)) + 
+  geom_col(position = "dodge", color="black") +
+  theme(panel.border = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "black")
+  ) +
+    theme_classic() +
+  scale_y_continuous(labels = scales::comma) +
+  scale_x_continuous(labels = formatC(0:23, width = 2, flag = "0"),breaks = 0:23) +
+  theme(axis.text.x = element_text(angle = 60,hjust = 1)) +
+  labs(
+    title="Rides per hour", 
+    x = "Hour", 
+    y = "Number of rides",
+    fill='Member Types'
+    )
+
+```
+
+Here we can see that the number of rides slowly rise until hitting a peak at 17:00(5pm). We can see that in the morning the peak times are around 07-08:00 while in the afternoon the peak is between 16-18:00(4-6 pm)
+
+Now let's look at the average duration of trips by each hour
+
+```{r}
+
+# Plot it
+
+ggplot(hourly_plot, aes(x = start_hour, y = average_duration, fill = member_type)) + 
+  geom_col(position = "dodge",color="black") +
+  theme(panel.border = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "black")
+  ) +
+  theme_classic() +
+   scale_y_continuous(labels = scales::comma) +
+   scale_x_continuous(labels = formatC(0:23, width = 1, flag = "0"),breaks = 0:23) +
+  labs(
+    title="Average duration by hour", 
+    x = "Hour of the day", 
+    y = "Average duration (in mins)",
+    fill='Member Types'
+  )
+    
+```
+
+Here we can see that the duration of rides by annual members is actually very consistent while the casual member's average duration in less so. Interesting to note that the longest average duration for the casual type is during 04:00 in the morning. So while 04:00 is one of the times with the least amount of people riding, the people that do ride at that time ride for the longest.
+
+Now let's look more into the bike types and their relationship with the members
+
+```{r}
+
+#  Create database
+
+bike_plot <- merged_df_clean_v2 %>%
+  group_by(member_type, rideable_type) %>%
+  summarize(
+    number_of_rides = n(),
+    average_duration = mean(ride_duration),
+    total_duration = sum(ride_duration))
+```
+
+Now let's see the bike types that are used the most
+
+```{r}
+
+# Plot it
+
+ggplot(bike_plot, aes(x = rideable_type, y = number_of_rides, fill = member_type)) + 
+  geom_col(position = "dodge",color="black") +
+  theme(panel.border = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "black")
+  ) +
+  theme_classic() +
+   scale_y_continuous(labels = scales::comma) +
+  labs(
+    title="Most used bike tyes", 
+    x = "Bike Type", 
+    y = "Number of rides",
+    fill='Member Types'
+  )
+    
+
+```
+
+We can see from the data that casual users use all 3 types of bikes pretty equally while the annual members have a preference for the classic bikes.
+
+Now let's look at the station data
+
+As explained before, there are quite a lot of stations with blank names so we will have to drop these columns for now. Ideally we would ask the Cyclist team for more information as to why these are missing but for the purpose of this exercise we will drop them
+
+```{r}
+
+# So let's create 2 new datasets; one without the blank start_station_names and one without the blank end_station_names
+
+merged_df_stations_start <- with(merged_df_clean_v2, merged_df_clean_v2[!(start_station_name == "" | is.na(start_station_name)), ])
+
+merged_df_stations_end <- with(merged_df_clean_v2, merged_df_clean_v2[!(end_station_name == "" | is.na(end_station_name)), ])
+
+
+```
+
+```{r}
+
+# Now let's create the handy dataframe for our stations plots
+
+
+start_station_plot <- merged_df_stations_start %>% 
+  group_by(start_station_name, member_type) %>% 
+  summarize (number_of_rides = n()) %>% 
+  arrange(-number_of_rides) %>% 
+  head(10)
+
+
+end_station_plot <- merged_df_stations_end %>% 
+  group_by(end_station_name, member_type) %>% 
+  summarize (number_of_rides = n()) %>% 
+  arrange(-number_of_rides) %>% 
+  head(10)
+
+
+```
+
+```{R}
+
+# Now let's find out the most popular start station overall
+
+ggplot(start_station_plot, aes(x = number_of_rides , y =reorder(start_station_name, number_of_rides))) +
+  geom_col(color="black") +
+  theme(panel.border = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "black")
+  ) +
+  theme_classic() +
+  labs(
+    title="Most popular start station overall", 
+    x = "Number of rides", 
+    y = "Station name",
+  )
+```
+
+Looks like Streeter Dr and Grave Ave is by far the most popular station with Millenium Park and Clark St & Elm St coming after
+
+Now let's divide this by members and casuals and see what stations they prefer
+
+```{r}
+
+# Start by the annual members
+
+start_station_plot %>% 
+  filter(member_type == "member") %>%
+  ggplot(aes(x = number_of_rides , y =reorder(start_station_name, number_of_rides))) +
+  geom_col(color="black") +
+  theme(panel.border = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "black")
+  ) +
+  theme_classic() +
+  labs(
+    title="Most popular start station for annual members", 
+    x = "Number of rides", 
+    y = "Station name",
+  )
+  
+```
+
+So it seems like the most popular overall stations are not actually very popular with the annual members
+
+```{r}
+
+start_station_plot %>% 
+  filter(member_type == "casual") %>%
+  ggplot(aes(x = number_of_rides , y =reorder(start_station_name, number_of_rides))) +
+  geom_col(color="black") +
+  theme(panel.border = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "black")
+  ) +
+  theme_classic() +
+  labs(
+    title="Most popular start station for casual members", 
+    x = "Number of rides", 
+    y = "Station name",
+  )
+
+
+```
+
+The casual members are overwhelmingly starting their rides at Streeter Dr & Grand Avenue with Millennium Park coming in second. Interesting to see there is no station that shows up in both graphs so it seems like in this metric the casuals and members completely differ.
+
+Also, the Streeter Dr & Grand Ave station is located near to many parks, museums and even a pier so we can assume that the casual members are using the bikes more for leisure w
+
+Now let's look at the routes
+
+```{r}
+
+# Make a new dataframe with all the blank routes dropped
+
+merged_df_route <- with(merged_df_clean_v2, merged_df_clean_v2[!(route == "--" | is.na(route)), ])
+
+# Make a handy dataframe to plot with
+
+route_plot <- merged_df_route %>% 
+  group_by(route, member_type) %>% 
+  summarize (number_of_rides = n()) %>% 
+  arrange(-number_of_rides) %>% 
+  head(10)
+
+head(route_plot)
+
+
+```
+
+```{r}
+
+  ggplot(route_plot, aes(x = number_of_rides , y =reorder(route, number_of_rides))) +
+  geom_col(color="black") +
+  theme(panel.border = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "black")
+  ) +
+  theme_classic() +
+  labs(
+    title="Most routes", 
+    x = "Number of rides", 
+    y = "Route",
+  )
+
+
+```
+
+The interesting takeaway here is that the 9 of the 10 most popular routes all end in the same station they started.
+
+# ***----FINDINGS----***
+
+From this data we can draw a few conclusions:
+
+-   The rides happen primarily during the summer months, during winter the ridership tanks.
+-   Most rides for casual users happen during the weekends, while the annual members actually tend to use it more during the weekdays
+-   Casual members ride for longer on average than the annual members
+-   The vast majority of casual rides come from one station in specific (Streeter Dr & Grand Ave)
+-   Streeter Dr & Grand Ave station is located near to many parks, museums and even a pier so that along with the fact that the casuals are using the service primarily on weekends means that we can safely assume that the casual members are using the bikes more for leisure
+-   On the other hand, the fact that the annual members tend to use the service more during weekdays as well as the stations not being particuarly close to any leisure spots means that we can safely assume that the annual members are using the service more as a means of transportation to use to get to or to use during work.
+
+# ***----ACT----***
+
+There are 2 ways we could think about acting. The first is to look at what is already working and the trends shown above and use that to make it even more attractive for the casuals to convert to annual members. For this approach we could perhaps add another member tier where the customer pays less and gets discounts on rides during the weekends. Another way is to allow annual members to be able to select their "main" station and rides from those stations will cost less than normal rides. Since casual riders use the bikes for longer perhaps you could also give annual members a progressive discount that becomes bigger the more you ride the bikes.
+
+The second way of acting would involve looking at the current weaknesses and trying to improve those in order to make it more attractive for casuals to make the switch. For this approach we would look at the fact that the casual ridership during the weekdays is much lower so perhaps if we could make it more attractive to ride during the weekdays we could convince casuals to start using the service in those days as well encouraging them to eventually make a switch. We can also see that the casuals use the service much less during the morning hours so perhaps making it more attractive to use the service in those hours can eventually convince casuals to use the service more and make the switch.
+
+Personally, I would go with the first approach as the second is very risky and we need some more data such as perhaps the occupation, gender and age of the riders as well as a survey to know a bit better what the casuals actually think about the service and if they are even able to use it more during weekdays and etc.
+
+# ***---PERSONAL OPINIONS----***
+
+I had a lot of fun creating this project and it was very interesting to learn more about R and it's uses. Overall, I found it a very responsive language and I love how easy it is to plot graphs and clean data. I look forward to using it more in the future and will definitely try some other projects with it.
+
+Most of the issues I encountered were actually with my PC since this dataset is a very large one and sometimes it would reach a bottleneck making me have to restart R. Also, since it was my first project with this language, I naturally had a few difficulties in finding out exactly what commands I have to use and how to do certain things. Thankfully there is a lot of documentation out there as well as many communities such as Kaggle with other users and notebooks that explain and can serve as inspiration in how to best use this amazing programming language.
