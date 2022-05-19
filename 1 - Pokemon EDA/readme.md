@@ -4,7 +4,7 @@
 
 
 
-In this project I take a look at the dataset found in "https://www.kaggle.com/datasets/abcsds/pokemon" and do some EDA and Data Visualization on the data.
+In this project I take a look at the dataset found in "https://www.kaggle.com/datasets/abcsds/pokemon" and do some EDA and Data Visualization on the data in Python.
 
 ## Libraries Used
 * Numpy
