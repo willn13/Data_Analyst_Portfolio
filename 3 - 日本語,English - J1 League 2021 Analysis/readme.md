@@ -14,7 +14,7 @@ In this project I take a look at the dataset found in "https://www.kaggle.com/da
 Please make sure you have all these libraries installed.
 
 
-###　日本語
+### 日本語
 
 このプロジェクトでは、"https://www.kaggle.com/datasets/willnunes/j1-league-2021 "で見つけたデータセットを見て、PythonでデータのEDAとデータ可視化を行います。このデータセットはBeautifulSoupを使用して私がスクレイピングしたものです。
 
