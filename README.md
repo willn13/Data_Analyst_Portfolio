@@ -1,10 +1,14 @@
 # <p align="center" style="margin-top: 0px;"> ⭐ Data Analyst Portfolio ⭐
-
+  
 This is a repository for all the Data Analysis projects that I have done
+  
+ ## **Other links** : 
 
 📝 Kaggle : https://www.kaggle.com/willnunes
 
 📈 Tableau Public : https://public.tableau.com/app/profile/william.f.nunes
+  
+  ## **Projects**
 
 1 - ✨ Pokémon EDA - In this project I explore the Pokémon dataset with some basic EDA and Visualizations
 
