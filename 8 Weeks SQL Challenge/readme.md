@@ -15,4 +15,4 @@ Thanks @DataWithDanny for the excellent SQL case studies!
   ### Business Case
 Danny opened a restaurant that only serves 3 foods: Sushi, Ramen and Curry. To help expand his business, Danny wants us to look at the data and answer a few key questions. 
   
-Check out the full case study [here](https://8weeksqlchallenge.com/case-study-1/) and my **solution** on [GitHub][(https://github.com/willn13/Data_Analyst_Portfolio/blob/main/8%20Weeks%20SQL%20Challenge/Week%201%20-%20Danny's%20Diner/dannys_diner.sql)]
+Check out the full case study [here](https://8weeksqlchallenge.com/case-study-1/) and my **solution** on [here](https://github.com/willn13/Data_Analyst_Portfolio/blob/main/8%20Weeks%20SQL%20Challenge/Week%201%20-%20Danny's%20Diner/dannys_diner.sql)
