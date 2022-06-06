@@ -1,7 +1,6 @@
 # Google Data Analytics Capstone Project
 
-[![vivaldi-OTap-MCcw-QS.png](https://i.postimg.cc/vZt1tWbW/vivaldi-OTap-MCcw-QS.png)](https://postimg.cc/jDCdsnW5)
-
+![](https://i.postimg.cc/vZt1tWbW/vivaldi-OTap-MCcw-QS.png)
 ### Capstone Project for the Google Data Analytics Certificate at Coursera. Written in the R Programming Language using Rstudio and Quarto. Please make sure you have Quarto installed in order to view .qmd files. A .html file has also been provided as an alternative.
 
 The Dashboard for this project can be found [here](https://public.tableau.com/views/CyclisticDashboard_16540646886980/Dashboard?:language=en-US&:display_count=n&:origin=viz_share_link)
