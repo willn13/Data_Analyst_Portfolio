@@ -20,6 +20,6 @@ This is a repository for all the Data Analysis projects that I have done
  
  4 - 😷 [Covid-19 Analysis](https://github.com/willn13/Data_Analyst_Portfolio/tree/main/4%20-%20Covid%20Analysis) - Analyzed the Covid-19 Dataset from OWID with SQL and created a visualization with some of the analysis.
   
- 5 - 📊 [Super Store Sales Analysis](https://github.com/willn13/Data_Analyst_Portfolio/tree/main/5%20-%20Super%20Store%20Sales%20Analysis) - Analyzed the Super Stores Sales with Python and Plotly. Created dashboard using the PowerBI software.
+ 5 - 📊 [Super Store Sales Analysis](https://github.com/willn13/Data_Analyst_Portfolio/tree/main/5%20-%20Super%20Store%20Sales%20Analysis) - Analyzed the Super Stores Sales with Python and Plotly. Created dashboard using the PowerBI software (can be found [here](https://www.dropbox.com/s/jat7hn9z0e2b7vk/super_store_dash.pbix?dl=0)).
  
 🎆 [8 Weeks SQL Challenge](https://github.com/willn13/Data_Analyst_Portfolio/tree/main/8%20Weeks%20SQL%20Challenge) - The **[#8WeekSQLChallenge](https://8weeksqlchallenge.com)** is a set of case studies dividied into a total of 8 weeks. In this repository are the answers to each of the case studies.
